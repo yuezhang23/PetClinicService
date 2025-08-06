@@ -1,4 +1,4 @@
-package com.example.WeePetClinic.Components.Service.Account;
+package com.example.WeePetClinic.Components.Service.doubleRole;
 
 import com.example.WeePetClinic.Components.Model.forSql.ClinicImp;
 import com.example.WeePetClinic.Components.Model.forSql.User.UserEmpVetOri;
@@ -6,8 +6,10 @@ import com.example.WeePetClinic.Components.Model.UserClientOri;
 import com.example.WeePetClinic.Components.Model.forPostSql.User.UserClientDonorOri;
 import com.example.WeePetClinic.Components.Model.forPostSql.donateService.DonationOri;
 import com.example.WeePetClinic.Components.Model.forSql.User.UserClientPetOwnerOri;
-
 import com.example.WeePetClinic.Components.Model.forSql.User.UserEmployeeImpl;
+import com.example.WeePetClinic.Components.Service.ServiceUserGeneral;
+import com.example.WeePetClinic.Components.Repository.repoDTO.ProjDonationDetail;
+import com.example.WeePetClinic.Components.Repository.repoDTO.ProjAppointmentDetail;
 
 import java.sql.Timestamp;
 import java.util.List;

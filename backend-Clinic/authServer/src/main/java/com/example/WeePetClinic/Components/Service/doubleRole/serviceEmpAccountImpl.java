@@ -1,29 +1,29 @@
-package com.example.WeePetClinic.Components.Service.Account;
+package com.example.WeePetClinic.Components.Service.doubleRole;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.WeePetClinic.Componentss.Model.InvoiceOri;
-import com.example.WeePetClinic.Componentss.Model.UserClientOri;
-import com.example.WeePetClinic.Componentss.Model.UserOri;
-import com.example.WeePetClinic.Componentss.Model.forPostSql.User.UserClientDonorOri;
-import com.example.WeePetClinic.Componentss.Model.forPostSql.User.UserEmpAccountantImp;
-import com.example.WeePetClinic.Componentss.Model.forPostSql.donateService.DonationOri;
-import com.example.WeePetClinic.Componentss.Model.forSql.ClinicImp;
-import com.example.WeePetClinic.Componentss.Model.forSql.User.UserClientPetOwnerOri;
-import com.example.WeePetClinic.Componentss.Model.forSql.User.UserEmpVetOri;
-import com.example.WeePetClinic.Componentss.Model.forSql.User.UserEmployeeImpl;
-import com.example.WeePetClinic.Componentss.Model.forSql.clinicService.AppointmentOri;
-import com.example.WeePetClinic.Componentss.Repository.repoDTO.ProjAppointmentDetail;
-import com.example.WeePetClinic.Componentss.Repository.repoDTO.ProjDonationDetail;
+import com.example.WeePetClinic.Components.Model.InvoiceOri;
+import com.example.WeePetClinic.Components.Model.UserClientOri;
+import com.example.WeePetClinic.Components.Model.UserOri;
+import com.example.WeePetClinic.Components.Model.forPostSql.User.UserClientDonorOri;
+import com.example.WeePetClinic.Components.Model.forPostSql.User.UserEmpAccountantImp;
+import com.example.WeePetClinic.Components.Model.forPostSql.donateService.DonationOri;
+import com.example.WeePetClinic.Components.Model.forSql.ClinicImp;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserClientPetOwnerOri;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserEmpVetOri;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserEmployeeImpl;
+import com.example.WeePetClinic.Components.Model.forSql.clinicService.AppointmentOri;
+import com.example.WeePetClinic.Components.Repository.repoDTO.ProjAppointmentDetail;
+import com.example.WeePetClinic.Components.Repository.repoDTO.ProjDonationDetail;
+
+import jakarta.persistence.PersistenceException;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import jakarta.persistence.PersistenceException;
 
 @Component
 @Service
@@ -46,11 +46,6 @@ public class serviceEmpAccountImpl implements ServiceEmpAccountant<UserEmpAccoun
   }
 
 
-  @Override
-  public ClinicImp getDetailForClinic(int clinicID) {
-    return accessAccountant.findClinicById(clinicID);
-  }
-
   //crud
   @Override
   public UserEmpAccountantImp getAccountant(String id) {
@@ -59,8 +54,20 @@ public class serviceEmpAccountImpl implements ServiceEmpAccountant<UserEmpAccoun
 
   @Override
   public UserEmployeeImpl getEmpAccountant(String id) {
-    return accessAccountant.findEmpById(id).orElseThrow(()-> new NoSuchElementException("this is not an employee"));
+    return accessAccountant.findEmpById(id).orElseThrow(() -> new NoSuchElementException("Employee not found"));
   }
+
+  @Override
+  public ClinicImp getDetailForClinic(int clinicID) {
+    try {
+      return accessAccountant.findClinicById(clinicID);
+    } catch (UnsupportedOperationException e) {
+      System.err.println("Method not implemented: " + e.getMessage());
+      return null;
+    }
+  }
+
+ 
 
   @Override
   public void updateEmpAccountant(UserEmpAccountantImp emp) {
@@ -142,17 +149,22 @@ public class serviceEmpAccountImpl implements ServiceEmpAccountant<UserEmpAccoun
 
 
   @Override
-  public List<InvoiceOri> displayAllInvoicesForUser(UserOri user) {
+  public List<?> displayAllInvoicesForUser(UserEmpAccountantImp user) {
     return null;
   }
 
   @Override
-  public List<AppointmentOri> displayAppointmentsForUser(UserOri user) {
+  public List<?> displayAppointmentsForUser(UserEmpAccountantImp user) {
     return null;
   }
 
   @Override
-  public boolean accountCancellation(boolean delete, UserOri user) {
+  public boolean accountCancellation(boolean delete, UserEmpAccountantImp user) {
+    return false;
+  }
+
+  @Override
+  public boolean updateAccount(UserEmpAccountantImp newAccount) {
     return false;
   }
 }

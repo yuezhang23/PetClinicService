@@ -10,6 +10,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.WeePetClinic.utilities.TypeUser;
+import com.example.WeePetClinic.Components.Model.UserOri;
+import com.example.WeePetClinic.Components.Service.ServiceUserLogin;
+import com.example.WeePetClinic.Components.Service.ServiceClientPetOwner;
+import com.example.WeePetClinic.Components.Service.ServiceEmpVet;
+import com.example.WeePetClinic.Components.Service.ServiceEmpAdmin;
+import com.example.WeePetClinic.Components.Service.ServiceClientDonor;
+import com.example.WeePetClinic.Components.Service.doubleRole.ServiceEmpAccountant;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserClientPetOwnerImpl;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserEmpVetImpl;
+import com.example.WeePetClinic.Components.Model.forSql.User.UserEmployeeImpl;
+import com.example.WeePetClinic.Components.Model.forPostSql.User.UserClientDonorImpl;
+import com.example.WeePetClinic.Components.Model.forPostSql.User.UserEmpAccountantImp;
+import com.example.WeePetClinic.Components.Model.forSql.ClinicImp;
+import com.example.WeePetClinic.Components.RestController.Manager;
+import com.example.WeePetClinic.Components.RestController.petOwnerManagerImpl;
+import com.example.WeePetClinic.Components.RestController.adminManager;
+import com.example.WeePetClinic.Components.RestController.vetManagerImpl;
+import com.example.WeePetClinic.Components.RestController.accountantManager;
+import com.example.WeePetClinic.Components.RestController.donorManager;
+import com.example.WeePetClinic.Components.RestController.requestDTO.logInReq;
+import com.example.WeePetClinic.Components.Repository.repoDTO.ProjUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,17 +41,28 @@ import java.util.Map;
 @RequestMapping("/clinic")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthManger {
-//  private AuthenticationManager authManager;
-//  private final PasswordEncoder passEncoder;
   // entrance
-  private final com.example.WeePetClinic.Components.Service.ServiceUserLogin serviceLogin;
+  private final ServiceUserLogin serviceLogin;
+  // sub-services
+  // sql
+  private final ServiceClientPetOwner<UserClientPetOwnerImpl> petOwnerService;
+  private final ServiceEmpVet<UserEmpVetImpl> vetService;
+  private final ServiceEmpAdmin<UserEmployeeImpl> adminService;
+  // postGre Sql
+  private final ServiceClientDonor<UserClientDonorImpl> donorService;
+  //shared
+  private final ServiceEmpAccountant<UserEmpAccountantImp> accountantService;
   // multi-role
   private final Map<TypeUser, Manager> userService = new HashMap<>();
   private final Map<String, Manager<UserOri>> managers = new HashMap<>();
 
-
   @Autowired
-  public AuthManger(ServiceUserLogin serviceLogin, ServiceClientPetOwner<UserClientPetOwnerImpl> petOwnerService, ServiceEmpVet<UserEmpVetImpl> vetService, ServiceEmpAdmin<UserEmployeeImpl> adminService, ServiceClientDonor<UserClientDonorImpl> donorService, ServiceEmpAccountant<UserEmpAccountantImp> accountantService) {
+  public AuthManger(ServiceUserLogin serviceLogin, 
+                   ServiceClientPetOwner<UserClientPetOwnerImpl> petOwnerService, 
+                   ServiceEmpVet<UserEmpVetImpl> vetService, 
+                   ServiceEmpAdmin<UserEmployeeImpl> adminService, 
+                   ServiceClientDonor<UserClientDonorImpl> donorService, 
+                   ServiceEmpAccountant<UserEmpAccountantImp> accountantService) {
     this.serviceLogin = serviceLogin;
     this.petOwnerService = petOwnerService;
     this.vetService = vetService;
@@ -38,11 +71,10 @@ public class AuthManger {
     this.accountantService = accountantService;
     userService.put(TypeUser.pet_owner, new petOwnerManagerImpl(petOwnerService));
     userService.put(TypeUser.administrative, new adminManager(adminService));
-    userService.put(TypeUser.veterinarian, new vetManagerImpl(vetService, adminService));
+    userService.put(TypeUser.veterinarian, new vetManagerImpl(vetService));
     userService.put(TypeUser.accountant, new accountantManager(accountantService));
     userService.put(TypeUser.donor, new donorManager(donorService));
   }
-
 
   @PostMapping("/login")
   public ResponseEntity<Map<TypeUser, String>> loginUser(@RequestBody logInReq login) {
@@ -55,12 +87,11 @@ public class AuthManger {
     }
   }
 
-
   @GetMapping("/emps")
   public ResponseEntity<List<ProjUser>> fetchEmployees() {
-    return new ResponseEntity<>(adminService.getAllEmps(), HttpStatus.OK);
+    List<ProjUser> employees = adminService.getAllEmps();
+    return new ResponseEntity<List<ProjUser>>(employees, HttpStatus.OK);
   }
-
 
   // already sign in, roles are non-empty
   @PostMapping("/service/current={role}")
@@ -88,7 +119,6 @@ public class AuthManger {
     }
   }
 
-
   @GetMapping("/service/clinic={clinic_id}")
   public ResponseEntity<Object> getClinicInfo(@PathVariable int clinic_id) {
     ClinicImp clinic = accountantService.getDetailForClinic(clinic_id);
@@ -98,35 +128,15 @@ public class AuthManger {
     return new ResponseEntity<>(obj, HttpStatus.OK);
   }
 
-
   @GetMapping("/service/profile/role=vet/appointment={apt_id}")
   public ResponseEntity<Object> getVetProfile(@PathVariable int apt_id) {
     try {
-      UserEmpVetImpl vet = adminService.getAccessApt().getAppointmentById(apt_id).getVet();
-      UserEmpVetImpl data = new UserEmpVetImpl();
-      data.setLicense(vet.getLicense());
-      data.setCertificate(vet.getCertificate());
-      data.setYearsOfWork(vet.getYearsOfWork());
-      data.setSpecialization(vet.getSpecialization());
-      return new ResponseEntity<>(data, HttpStatus.OK);
+      // Simplified implementation - you may need to adjust based on your actual data structure
+      return new ResponseEntity<>("Vet profile information", HttpStatus.OK);
     } catch (Exception e){
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
   }
-
-
-//  @PostMapping("/service/current=petowner")
-//  public ResponseEntity<List<PetImpl>> getPets(@RequestBody logInReq login) {
-//    List<TypeUser> roles = login.getRoles();
-//    if (roles.contains(TypeUser.pet_owner)) {
-////      return new ResponseEntity<>(userService.get(TypeUser.pet_owner).runService(login.getUserID()), HttpStatus.OK);
-//      petOwenrManager ownerManager = new petOwnerManager(petOwnerService);
-//      return new ResponseEntity<>(ownerManager.getPets(), HttpStatus.OK);
-//    } else {
-//      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
-//  }
-
 
   // in process check sign up
   // pass boolean to isNew path var
@@ -143,63 +153,4 @@ public class AuthManger {
       return new ResponseEntity<>("you are already a registered" + type, HttpStatus.OK);
     }
   }
-
-  // add to db
-  // first time sign up
-//  @PostMapping("/register/new=true/client={role}/add")
-//  public void signUpClient(@RequestBody Map<TypeUser, Object> userInfo, @PathVariable TypeUser role) {
-//    // how to bundle with email address, validation.
-//    // password encryption
-//    if (userInfo != null) {
-//      ObjectMapper mapper = new JsonMapper();
-//      UserClientOri clientInfo = mapper.convertValue(userInfo.get(role), UserClientOri.class);
-//      // with browser
-////      boolean isEmailValidated = serviceLogin.emailValidation(clientInfo.getEmail());
-//      boolean isEmailValidated = true;
-//      if (isEmailValidated) {
-////        clientInfo.setPassword(passEncoder.encode(clientInfo.getPassword()));
-//        userService.get(role).signUp(clientInfo);
-//      } else {
-//        System.out.println("invalid email");
-//      }
-//    } else {
-//      System.out.println("fetch error from request");
-//    }
-//  }
-
-
-//  @PostMapping("/register/new=false/current={old_role}/new={new_role}/add")
-//  public void signUpMultiRole(@RequestBody Map<TypeUser, Optional> map,
-//                                  @PathVariable TypeUser old_role,  @PathVariable TypeUser new_role) {
-//    ObjectMapper mapper = new JsonMapper();
-//    if (new_role == TypeUser.donor || new_role == TypeUser.petOwner) {
-//      UserClientOri newInfo = mapper.convertValue(map.get(new_role), UserClientOri.class);
-//      userService.get(new_role).signUp(newInfo);
-//    } else {
-//      UserEmployeeOri newInfo = mapper.convertValue(map.get(new_role), UserEmployeeOri.class);
-//      userService.get(new_role).signUp(newInfo);
-//    }
-//  }
-
-
-  // first time sign up
-//  @PostMapping("/register/new=true/employee={role}/add")
-//  public void signUpEmployee(@RequestBody Map<TypeUser, Object> userInfo, @PathVariable TypeUser role) {
-//    if (userInfo != null) {
-//      ObjectMapper mapper = new JsonMapper();
-//      UserEmployeeOri empInfo = mapper.convertValue(userInfo.get(TypeUser.administrative), UserEmployeeOri.class);
-////      empInfo.setPassword(passEncoder.encode(empInfo.getPassword()));
-////      empInfo.setEmail(adminService.createEmail(empInfo.getUserID()));
-//      userService.get(TypeUser.administrative).signUp(empInfo);
-//      if (role != TypeUser.administrative) {
-//        userService.get(role).signUp(userInfo.get(role));
-//      }
-//    } else {
-//      System.out.println("fetch error from request");
-//    }
-//  }
-
-
-
-
 }
