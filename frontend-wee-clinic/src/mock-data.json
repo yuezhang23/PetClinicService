@@ -1,0 +1,201 @@
+{
+  "employees": [
+    {
+      "personal": {
+        "userID": "89bd9324-04e0-4cd6-aa27-981508bd219f",
+        "password": "",
+        "firstName": "James",
+        "lastName": "Smith",
+        "role": "",
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+      },
+      "clinic_id" : 1,
+        "statement": ""
+    },
+    {
+      "personal": {
+        "password": "",
+        "userID": "7eeba422-5717-4026-8e74-e517576e26bd",
+        "firstName": "Mary",
+        "lastName": "Miller",
+        "role": "",
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+      },
+      "clinic_id" : 2,
+        "statement": ""
+    },
+    {
+      "personal": {
+        "password": "",
+        "userID": "6e88529c-6739-4f1b-bea0-02afdd336bb3",
+        "firstName": "Linda",
+        "lastName": "Jones",
+        "role": "",  
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+      },
+      "clinic_id" : 3,
+      "statement": ""
+    }
+  ],
+
+  "doners": [
+    {
+      "client" : {
+        "personal": {
+        "password": "",
+        "userID": "6739-4f1b-bea0-02afdd336bb3-6e88529c",
+        "firstName": "Linda",
+        "lastName": "Jones",
+        "role": "",  
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+        },
+        "card_type": " ",
+        "card_number": 6453453653  
+      },
+      "donate_times":-1,
+      "personal_statement" : " ",
+      "birthday": " ",
+      "type": "company",
+      "profession_background": " "
+    }
+  ],
+
+
+  "clients": [
+    {     
+      "personal": {
+        "password": "",
+        "userID": "6739-4f1b-bea0-6e88529c-02afdd336bb3",
+        "firstName": "Lily",
+        "lastName": "Jones",
+        "role": "",  
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+      },
+      "card_type": "00",
+      "card_number": 233787633939
+    },
+    {     
+      "personal": {
+        "password": "",
+        "userID": "4f1b-6739-bea0-6e88529c-02afdd336bb3",
+        "firstName": "Anne",
+        "lastName": "Dickenson",
+        "role": "",  
+        "roles": {"employee": "", "vet" : ""},
+        "email": "",
+        "phone": "",
+        "address": {}
+      },
+      "card_type": "00",
+      "card_number": 234553333939
+    }
+  ],
+  
+  
+  "transactions": [
+    {
+      "id": "77af111b-4177-4774-af57-36df9053e1df",
+      "amount": 95.22,
+      "employee": 
+      {
+        "personal": {
+          "userID": "89bd9324-04e0-4cd6-aa27-981508bd219f",
+          "password": "",
+          "firstName": "James",
+          "lastName": "Smith",
+          "role": "",
+          "roles": {"employee": "", "vet" : ""},
+          "email": "",
+          "phone": "",
+          "address": {}
+        },
+        "clinic_id" : 1
+      },
+      "doner": 
+      {
+        "client" : {
+          "personal": {
+          "password": "",
+          "userID": "6739-4f1b-bea0-02afdd336bb3-6e88529c",
+          "firstName": "Linda",
+          "lastName": "Jones",
+          "role": "",  
+          "roles": {"employee": "", "vet" : ""},
+          "email": "",
+          "phone": "",
+          "address": {}
+          },
+          "card_type": " ",
+          "card_number": 6453453653  
+        },
+        "donate_times":-1,
+        "personal_statement" : " ",
+        "birthday": " ",
+        "type": "company",
+        "profession_background": " "
+      },
+      "date": "8/5/2022",
+      "approved": true
+      
+    },
+    {
+      "id": "6e6698a6-972e-4d6e-a491-0e738616e75a",
+      "amount": 613.19,
+      "employee": 
+      {
+        "personal": {
+          "password": "",
+          "userID": "7eeba422-5717-4026-8e74-e517576e26bd",
+          "firstName": "Mary",
+          "lastName": "Miller",
+          "role": "",
+          "roles": {"employee": "", "vet" : ""},
+          "email": "",
+          "phone": "",
+          "address": {}
+        },
+        "clinic_id" : 2,
+          "statement": ""
+      },
+      "doner":  {
+        "client" : {
+          "personal": {
+          "password": "",
+          "userID": "6739-4f1b-bea0-02afdd336bb3-6e88529c",
+          "firstName": "Linda",
+          "lastName": "Jones",
+          "role": "",  
+          "roles": {"employee": "", "vet" : ""},
+          "email": "",
+          "phone": "",
+          "address": {}
+          },
+          "card_type": " ",
+          "card_number": 6453453653  
+        },
+        "donate_times":-1,
+        "personal_statement" : " ",
+        "birthday": " ",
+        "type": "company",
+        "profession_background": " "
+      },
+      "date": "7/30/2022",
+      "approved": false
+    }
+  ]
+}

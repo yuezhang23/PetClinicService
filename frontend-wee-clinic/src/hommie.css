@@ -1,0 +1,111 @@
+:root {
+    --color-empty-shade: #fff;
+    --color-light-shade: #eaeaea;
+    --color-lighter-shade: #edebe6;
+    --color-dark-shade: #6f6f66;
+    --color-darker-shade: #ecf3d3;
+    --color-text: #2d2d26;
+    --color-accent: #f4ff56;
+    --color-constructive: #109d46;
+    --color-destructive: #d94b03;
+  }
+  
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
+      Droid Sans, Helvetica Neue, sans-serif;
+    /* background-image: url(/Users/zhangyue/Documents/Jobs/projectClinic/frontend-wee-clinic/public/images/bg-city.jpeg); */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  
+  }
+
+
+.inputbox {
+    position: relative;    
+    margin: 20px;
+    max-width: auto;
+    border-bottom: 2px solid rgb(0, 0, 0);
+    transition: all 0.5s ease-in-out;
+}
+
+.inputbox input {
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0 35px 0 5px;
+    color: rgb(0, 0, 0);
+}
+
+.inputbox ion-icon {
+    position: absolute;
+    right: 8px;
+    color:rgb(0, 0, 0);
+    font-size: 1.2rem;
+    top: 12px;
+    transition: all 0.5s ease-in-out;
+}
+
+
+.inputbox label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: solid rgb(0, 0, 0);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.5s ease-in-out;
+}
+
+input:focus ~ label,
+input:valid ~ label {
+    top: -5px;
+    font-size: 0.9rem;
+    color: #a8a8a8;
+}
+
+button {
+    height: 4cqmax;
+    width: 120px;
+    border-radius: 40px;
+    color:  #fff;
+    border: none;
+    outline: none;
+    background-color: rgba(29, 16, 206, 0.5);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.4s ease;
+}
+
+button:hover {
+    background-color:  rgba(124, 50, 221, 0.835);
+}
+
+.register {
+    font-size: 0.9rem;
+    color:  #080808;
+    text-align: center;
+    margin: 25px 0 10px;
+    transition: all 0.5s ease-in-out;
+}
+
+.register p a {
+    text-decoration: none;
+    color:  #080808;
+    font-weight: 600;
+    transition: all 0.5s ease-in-out;
+}
+
+.register p a:hover {
+    text-decoration: underline;
+    color: #a8a8a8;
+}
