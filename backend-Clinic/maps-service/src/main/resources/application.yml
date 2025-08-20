@@ -6,7 +6,7 @@ spring:
     name: maps-service
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/maps_db
+    url: jdbc:postgresql://localhost:5433/petclinic_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver

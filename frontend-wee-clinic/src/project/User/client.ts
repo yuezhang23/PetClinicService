@@ -1,20 +1,61 @@
 
 import axios from "axios";
 import { User } from "../../utils/types";
+import { getAccountServiceUrl, getClinicServiceUrl } from "../../config/api";
 
 // export const BASE_API = process.env.REACT_APP_API_BASE;
 export const USER_API = `/api/user`;
 export const USERS_API = `/api/users`;
 
-export const BASE_API = process.env.REACT_APP_API_BASE;
+// Update to use account-service endpoints
+export const ACCOUNT_API = getAccountServiceUrl();
+export const CLINIC_API = getClinicServiceUrl();
 
+export const BASE_API = process.env.REACT_APP_API_BASE;
 
 export const findUserRolesById = async (user: any) => {
     if (user.id === "") {
         return user;
-    } else{
-        const response = await axios.post(`${BASE_API}/clinic/login`, user);
-        return response.data;
+    } else {
+        try {
+            console.log('Attempting legacy authentication for user:', user.userID);
+            
+            // Use legacy authentication endpoint for backward compatibility
+            const authResponse = await axios.post(`${ACCOUNT_API}/auth/legacy/login`, {
+                userID: user.userID,
+                password: user.password
+            });
+            
+            console.log('Legacy authentication response:', authResponse.data);
+            
+            if (authResponse.data.authenticated) {
+                // Store authentication info
+                localStorage.setItem('legacyUser', JSON.stringify(authResponse.data));
+                
+                // Return user roles in the expected format
+                return authResponse.data.roles;
+            } else {
+                throw new Error('Authentication failed');
+            }
+        } catch (error) {
+            console.error('Legacy authentication failed:', error);
+            
+            // Fallback: try to get roles by ID only (for existing users without password)
+            try {
+                console.log('Trying to get roles by ID only for user:', user.userID);
+                const rolesResponse = await axios.post(`${ACCOUNT_API}/auth/legacy/roles`, {
+                    userID: user.userID
+                });
+                
+                if (rolesResponse.data.roles) {
+                    return rolesResponse.data.roles;
+                }
+            } catch (fallbackError) {
+                console.error('Fallback authentication also failed:', fallbackError);
+            }
+            
+            throw error;
+        }
     }
 };
 

@@ -36,6 +36,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         "/auth/login",
         "/auth/register", 
         "/auth/refresh",
+        // Account-service public endpoints via gateway prefix
+        "/accounts/auth/login",
+        "/accounts/auth/register",
+        "/accounts/auth/refresh",
+        "/accounts/auth/legacy/login",
+        "/accounts/auth/legacy/roles",
         "/health",
         "/public",
         "/actuator"

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # PostgreSQL - Single database for all services
+  postgres:
+    image: postgres:15
+    container_name: petclinic-postgres
+    environment:
+      POSTGRES_DB: petclinic_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # MySQL for account-service (binds to host 3307)
+  mysql:
+    image: mysql:8.0
+    container_name: petclinic-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Chinadoll1002
+      MYSQL_DATABASE: we_pc
+      MYSQL_USER: petclinic_user
+      MYSQL_PASSWORD: petclinic_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --explicit_defaults_for_timestamp=true
+      --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: petclinic-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # Optional: Simple monitoring with Adminer (database management)
+  adminer:
+    image: adminer:latest
+    container_name: petclinic-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - mysql
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+  mysql-data:
+
+networks:
+  default:
+    name: petclinic-simple-network

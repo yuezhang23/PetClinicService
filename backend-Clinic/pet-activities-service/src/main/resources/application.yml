@@ -4,23 +4,8 @@ server:
 spring:
   application:
     name: pet-activities-service
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: pet_activities
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: pet-activities-service
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  # MongoDB and Kafka configuration removed for simplified setup
+  # Add back when needed: ./start-services.sh
 
 eureka:
   client:

@@ -16,9 +16,13 @@ function Logging() {
   const fetchRole = async (e : any) => {
     e.preventDefault();
     try {
+      console.log('Attempting to authenticate user:', currentUser.userID);
+      
       const data = await connect.findUserRolesById(currentUser);
+      console.log('Authentication successful, user roles:', data);
+      
       dispatch(setCurrentUser({...currentUser, roles: {...data}}));
-      // alert('Profile successfully updated.');
+      
       if (Object.entries(data).length === 1) {
         navigate(`./currentRole=${Object.keys(data)[0]}`);
       } 
@@ -26,9 +30,21 @@ function Logging() {
         navigate(`./currentRole/`);
       }
     } catch (error : any) {
-      alert("Incorrect Username or Password")
-      console.error(error.response.data);
-  }};
+      console.error('Authentication error:', error);
+      
+      if (error.response) {
+        // Server responded with error
+        const errorMessage = error.response.data?.error || error.response.data?.message || 'Authentication failed';
+        alert(`Login failed: ${errorMessage}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        alert('Login failed: No response from server. Please check if the account service is running.');
+      } else {
+        // Something else happened
+        alert('Login failed: ' + (error.message || 'Unknown error'));
+      }
+    }
+  };
      
 
   const selectRole = (key : string, value : string) => {

@@ -11,7 +11,7 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        # Auth Service Routes
+        # Unified Auth Service Routes (merged account-service + auth-server)
         - id: auth-service
           uri: lb://auth-server
           predicates:
@@ -31,7 +31,7 @@ spring:
             - StripPrefix=1
             - name: JwtAuthenticationFilter
         
-        # Donor Service Routes
+        # Donor Service Routes (PostgreSQL-based)
         - id: donor-service
           uri: lb://donor-server
           predicates:
@@ -40,38 +40,11 @@ spring:
             - StripPrefix=1
             - name: JwtAuthenticationFilter
         
-        # Subscription Service Routes (Purchases & Subscriptions)
-        - id: subscription-service
-          uri: lb://subscription-service
-          predicates:
-            - Path=/subscription/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
-        
-        # Pet Activities Service Routes
-        - id: pet-activities-service
-          uri: lb://pet-activities-service
-          predicates:
-            - Path=/activities/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
-        
-        # Maps Service Routes (New)
+        # Maps Service Routes (PostgreSQL-based)
         - id: maps-service
           uri: lb://maps-service
           predicates:
             - Path=/maps/**
-          filters:
-            - StripPrefix=1
-            - name: JwtAuthenticationFilter
-        
-        # Account Management Service Routes (New)
-        - id: account-service
-          uri: lb://account-service
-          predicates:
-            - Path=/accounts/**
           filters:
             - StripPrefix=1
             - name: JwtAuthenticationFilter

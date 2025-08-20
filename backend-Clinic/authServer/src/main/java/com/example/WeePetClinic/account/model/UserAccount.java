@@ -1,5 +1,6 @@
-package main.java.com.example.WeePetClinic.model;
+package com.example.WeePetClinic.account.model;
 
+import com.example.WeePetClinic.utilities.TypeUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class UserAccount {
     private String email;
     
     @NotNull
-    @Size(min = 8, max = 255)
+    @Size(min = 6, max = 255)
     @Column(name = "password_hash")
     private String passwordHash;
     
@@ -40,32 +41,27 @@ public class UserAccount {
     private String lastName;
     
     @Column(name = "phone")
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$")
     private String phone;
     
-    @Column(name = "date_of_birth")
-    private LocalDateTime dateOfBirth;
+    @Column(name = "address")
+    private String address;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender")
-    private Gender gender;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "account_type")
-    private AccountType accountType;
+    @Column(name = "user_type")
+    private TypeUser userType;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private AccountStatus status;
     
-    @Column(name = "profile_picture_url")
-    private String profilePictureUrl;
+    @Column(name = "email_verified")
+    private Boolean emailVerified = false;
     
-    @Column(name = "bio", length = 1000)
-    private String bio;
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = false;
     
-    @Column(name = "preferences", columnDefinition = "TEXT")
-    private String preferences; // JSON string for user preferences
+    @Column(name = "two_factor_secret")
+    private String twoFactorSecret;
     
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
@@ -76,45 +72,13 @@ public class UserAccount {
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
     
-    @Column(name = "email_verified")
-    private Boolean emailVerified = false;
-    
-    @Column(name = "phone_verified")
-    private Boolean phoneVerified = false;
-    
-    @Column(name = "two_factor_enabled")
-    private Boolean twoFactorEnabled = false;
-    
-    @Column(name = "two_factor_secret")
-    private String twoFactorSecret;
-    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-    
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserAddress> addresses = new HashSet<>();
-    
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserRole> roles = new HashSet<>();
-    
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserSession> sessions = new HashSet<>();
-    
     // Enums
-    public enum Gender {
-        MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
-    }
-    
-    public enum AccountType {
-        PET_OWNER, VETERINARIAN, CLINIC_STAFF, ADMIN, SYSTEM
-    }
-    
     public enum AccountStatus {
         ACTIVE, INACTIVE, SUSPENDED, PENDING_VERIFICATION, DELETED
     }
@@ -123,12 +87,13 @@ public class UserAccount {
     public UserAccount() {}
     
     public UserAccount(String username, String email, String passwordHash, 
-                      String firstName, String lastName) {
+                      String firstName, String lastName, TypeUser userType) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.userType = userType;
         this.status = AccountStatus.PENDING_VERIFICATION;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -205,26 +170,23 @@ public class UserAccount {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
     
-    public LocalDateTime getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(LocalDateTime dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
     
-    public Gender getGender() { return gender; }
-    public void setGender(Gender gender) { this.gender = gender; }
-    
-    public AccountType getAccountType() { return accountType; }
-    public void setAccountType(AccountType accountType) { this.accountType = accountType; }
+    public TypeUser getUserType() { return userType; }
+    public void setUserType(TypeUser userType) { this.userType = userType; }
     
     public AccountStatus getStatus() { return status; }
     public void setStatus(AccountStatus status) { this.status = status; }
     
-    public String getProfilePictureUrl() { return profilePictureUrl; }
-    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
     
-    public String getBio() { return bio; }
-    public void setBio(String bio) { this.bio = bio; }
+    public Boolean getTwoFactorEnabled() { return twoFactorEnabled; }
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
     
-    public String getPreferences() { return preferences; }
-    public void setPreferences(String preferences) { this.preferences = preferences; }
+    public String getTwoFactorSecret() { return twoFactorSecret; }
+    public void setTwoFactorSecret(String twoFactorSecret) { this.twoFactorSecret = twoFactorSecret; }
     
     public LocalDateTime getLastLogin() { return lastLogin; }
     public void setLastLogin(LocalDateTime lastLogin) { this.lastLogin = lastLogin; }
@@ -235,33 +197,9 @@ public class UserAccount {
     public LocalDateTime getLockedUntil() { return lockedUntil; }
     public void setLockedUntil(LocalDateTime lockedUntil) { this.lockedUntil = lockedUntil; }
     
-    public Boolean getEmailVerified() { return emailVerified; }
-    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
-    
-    public Boolean getPhoneVerified() { return phoneVerified; }
-    public void setPhoneVerified(Boolean phoneVerified) { this.phoneVerified = phoneVerified; }
-    
-    public Boolean getTwoFactorEnabled() { return twoFactorEnabled; }
-    public void setTwoFactorEnabled(Boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
-    
-    public String getTwoFactorSecret() { return twoFactorSecret; }
-    public void setTwoFactorSecret(String twoFactorSecret) { this.twoFactorSecret = twoFactorSecret; }
-    
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-    
-    public Set<UserAddress> getAddresses() { return addresses; }
-    public void setAddresses(Set<UserAddress> addresses) { this.addresses = addresses; }
-    
-    public Set<UserRole> getRoles() { return roles; }
-    public void setRoles(Set<UserRole> roles) { this.roles = roles; }
-    
-    public Set<UserSession> getSessions() { return sessions; }
-    public void setSessions(Set<UserSession> sessions) { this.sessions = sessions; }
 }
