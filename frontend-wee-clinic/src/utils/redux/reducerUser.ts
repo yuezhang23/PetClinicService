@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { EMPTY_DONER, EMPTY_EMPLOYEE, EMPTY_PETOWNER, EMPTY_Transaction, EMPTY_USER, EMPTY_VET } from "../constants";
+import { EMPTY_DONER, EMPTY_EMPLOYEE, EMPTY_PETOWNER, EMPTY_USER, EMPTY_VET } from "../constants";
 
 const initialState = {
   currentUser: EMPTY_USER,

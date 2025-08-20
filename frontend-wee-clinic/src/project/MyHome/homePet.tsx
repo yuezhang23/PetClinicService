@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { Appointment } from 'src/utils/types';
 import { FaAddressCard, FaPhone } from 'react-icons/fa';
 import {contact, Vet} from '../../utils/types'
-import { EMPTY_USER } from 'src/utils/constants';
+import { EMPTY_USER, EMPTY_VET } from 'src/utils/constants';
 
 function PetProfile() {
     const {pathname} = useLocation();
@@ -56,12 +56,15 @@ function PetProfile() {
             } else { 
                 const res = await client.getVetProfileFromAppointment(apt_id, vet_name);
                 const vet: Vet = {
-                    ...EMPTY_USER,
-                    userID: res.vet_id,
-                    email: res.email,
-                    phone: res.phone,
-                    firstName: res.emp_first_name,
-                    lastName: res.emp_last_name,
+                    ...EMPTY_VET,
+                    personal: {
+                        ...EMPTY_VET.personal,
+                        userID: res.vet_id,
+                        email: res.email,
+                        phone: res.phone,
+                        firstName: res.emp_first_name,
+                        lastName: res.emp_last_name,
+                    },
                     statement: res.statement,
                     clinic_id: res.clinic_id,
                     vet_license: res.vet_license,

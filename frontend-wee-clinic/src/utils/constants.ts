@@ -1,4 +1,16 @@
-import { Client, Doner, Employee, petOwner, Transaction, User, Vet } from "./types"
+import { Client, Doner, Employee, petOwner, Transaction, User, Vet, PersonalInfo } from "./types"
+
+export const EMPTY_PERSONAL: PersonalInfo = {
+  userID: "", 
+  password: "", 
+  roles: {}, 
+  role: "guest",
+  firstName: "Guest",
+  lastName: "",
+  address:{} ,
+  email: "",
+  phone: ""
+}
 
 export const EMPTY_USER: User = {
   userID: "", 
@@ -13,7 +25,7 @@ export const EMPTY_USER: User = {
 }
 
 export const EMPTY_EMPLOYEE: Employee = { 
-  ...EMPTY_USER,
+  personal: EMPTY_PERSONAL,
   clinic_id: -1,
   statement: ""
 }
@@ -26,9 +38,8 @@ export const EMPTY_VET: Vet = {
   specialization: ""
 }
 
-
 export const EMPTY_CLIENT: Client = {
-  ...EMPTY_USER,
+  personal: EMPTY_PERSONAL,
   card_type: "",
   card_number: 0
 }
@@ -39,7 +50,7 @@ export const EMPTY_PETOWNER: petOwner = {
 }
 
 export const EMPTY_DONER: Doner = {
-  ...EMPTY_CLIENT,
+  client: EMPTY_CLIENT,
   donate_times: 0,
   personal_statement: "",
   birthday: "00/00/0000",

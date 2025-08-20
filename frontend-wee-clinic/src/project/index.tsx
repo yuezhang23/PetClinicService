@@ -14,9 +14,7 @@ import PublicProfile from './User/PublicProfile';
 // import FollowDetails from './User/Follows/FollowDetails';
 // import Claims from './User/Claims';
 import Donate from './Donate/donate';
-import HommiePetOwner from './MyHome/homePetOwner';
 import Hommie from './MyHome/index';
-import HommieVet from './MyHome/homeVet';
 import { AppContextProvider } from 'src/components/AppContextProvider';
 import { Fragment } from 'react';
 

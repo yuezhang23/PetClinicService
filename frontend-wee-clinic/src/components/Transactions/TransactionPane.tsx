@@ -2,7 +2,6 @@ import { useState } from "react"
 import { InputCheckbox } from "../InputCheckbox"
 import { TransactionPaneComponent } from "./types"
 
-
 export const TransactionPane: TransactionPaneComponent = ({
   transaction,
   loading,
@@ -13,10 +12,10 @@ export const TransactionPane: TransactionPaneComponent = ({
   return (
     <div className="RampPane">
       <div className="RampPane--content">
-        <p className="RampText">{transaction.doner.name} </p>
+        <p className="RampText">{transaction.doner.client.personal.firstName} {transaction.doner.client.personal.lastName}</p>
         <b>{moneyFormatter.format(transaction.amount)}</b>
         <p className="RampText--hushed RampText--s">
-          Settler: {transaction.employee.firstName} {transaction.employee.lastName} - {transaction.date}
+          Settler: {transaction.employee.personal.firstName} {transaction.employee.personal.lastName} - {transaction.date}
         </p>
       </div>
       <InputCheckbox

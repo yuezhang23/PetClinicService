@@ -32,8 +32,20 @@ export type Appointment = {
   received_date: string
 }
 
+export type PersonalInfo = {
+  userID: string
+  password: string
+  firstName: string
+  lastName: string
+  role: string
+  roles: roleType
+  email: string
+  phone: string
+  address: object
+}
 
-export type Client = User & {
+export type Client = {
+  personal: PersonalInfo
   card_type: string
   card_number: number
 }
@@ -42,7 +54,8 @@ export type petOwner = Client & {
   pet_family: [] 
 }
 
-export type Doner = Client & {
+export type Doner = {
+  client: Client
   donate_times: number
   personal_statement: string
   birthday: string
@@ -50,12 +63,11 @@ export type Doner = Client & {
   profession_background: string
 }
 
-
-export type Employee = User & {
+export type Employee = {
+  personal: PersonalInfo
   clinic_id: number
-  statement: string
+  statement?: string
 }
-
 
 export type Vet = Employee & {
   vet_license: string
@@ -63,7 +75,6 @@ export type Vet = Employee & {
   work_years: number
   specialization: string
 }
-
 
 export type User = {
   userID: string,

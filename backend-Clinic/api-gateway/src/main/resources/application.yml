@@ -1,0 +1,152 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Auth Service Routes
+        - id: auth-service
+          uri: lb://auth-server
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+              args:
+                excludePaths: /auth/login,/auth/register,/auth/refresh
+        
+        # Clinic Service Routes (Appointments & Core Services)
+        - id: clinic-service
+          uri: lb://clinic-server
+          predicates:
+            - Path=/clinic/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Donor Service Routes
+        - id: donor-service
+          uri: lb://donor-server
+          predicates:
+            - Path=/donor/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Subscription Service Routes (Purchases & Subscriptions)
+        - id: subscription-service
+          uri: lb://subscription-service
+          predicates:
+            - Path=/subscription/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Pet Activities Service Routes
+        - id: pet-activities-service
+          uri: lb://pet-activities-service
+          predicates:
+            - Path=/activities/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Maps Service Routes (New)
+        - id: maps-service
+          uri: lb://maps-service
+          predicates:
+            - Path=/maps/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Account Management Service Routes (New)
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/accounts/**
+          filters:
+            - StripPrefix=1
+            - name: JwtAuthenticationFilter
+        
+        # Health Check Routes (Public)
+        - id: health-check
+          uri: lb://clinic-server
+          predicates:
+            - Path=/health/**
+          filters:
+            - StripPrefix=1
+        
+        # Public Info Routes
+        - id: public-info
+          uri: lb://clinic-server
+          predicates:
+            - Path=/public/**
+          filters:
+            - StripPrefix=1
+      
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: 
+              - "http://localhost:3000"
+              - "http://localhost:3001"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+jwt:
+  secret: your-secret-key-here-make-it-very-long-and-secure-for-production-use
+  expiration: 86400000 # 24 hours
+  refresh-expiration: 604800000 # 7 days
+
+# Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5000
+  ratelimiter:
+    instances:
+      default:
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 1s
+
+# Logging Configuration
+logging:
+  level:
+    com.example.WeePetClinic: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

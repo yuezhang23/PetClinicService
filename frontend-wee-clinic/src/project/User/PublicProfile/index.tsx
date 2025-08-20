@@ -37,7 +37,7 @@ export default function PublicProfile() {
   const [profile, setProfile] = useState({ _id: "", description: "", favs: [] });
   const [filter, setFilter] = useState('');
   const contentVetList = ["Is the vet giving feedback in time", "Is the service satisfying overall", "Will you consider seeing this vet in the future"];
-  const [invoiceList, setInvoiceList] = useState([])
+  const [invoiceList, setInvoiceList] = useState<any[]>([])
 
   const handleSelectChange = (e : any) => {
   //   setFilter(e.target.value.toLowerCase());
@@ -63,7 +63,7 @@ export default function PublicProfile() {
         if (currentUser.role === "pet_owner") {
           setUser({...currentOwner})
           const res = await client.getUserInvoices(currentUser);
-          dispatch(setInvoiceList([...res]))
+          setInvoiceList([...res])
         } 
         if (currentUser.role === "donor") {
           setUser({...currentDonor})
@@ -105,6 +105,13 @@ export default function PublicProfile() {
     if (!currentUser || !follows) return false;
   }
   
+  const getUserProperty = (user: any, property: string) => {
+    if ('personal' in user) {
+      return user.personal[property];
+    }
+    return user[property];
+  };
+
   const followUser = async () => {
     if (currentUser.role === "guest") {
       alert("Hi, Guest! Please Sign in to follow the vet")
@@ -115,7 +122,8 @@ export default function PublicProfile() {
       alert("Sorry, you work here, can't Follow!")
       return;
     }
-    const status = await fClient.followsUser(user?.userID);
+    const userId = getUserProperty(user, 'userID');
+    const status = await fClient.followsUser(userId);
     fetchFollows();
   }
 
@@ -125,7 +133,8 @@ export default function PublicProfile() {
       navigate("../Hommie")
       return;
     }
-    const status = await fClient.unfollowsUser(user?.userID);
+    const userId = getUserProperty(user, 'userID');
+    const status = await fClient.unfollowsUser(userId);
     fetchFollows();
   }
 
@@ -139,9 +148,12 @@ export default function PublicProfile() {
       <button className="btn btn-sm bg-warning-subtle rounded-5 mb-2" onClick={() => navigate(-1)}> 》〉Back </button>
       <div className="card d-flex justify-content-between">
         <div className="card-header row">
-          <h3 className="col me-2"><FaSmileWink className="fs-1 text-warning mx-2 "/>{user?.firstName},{user?.lastName}</h3>
+          <h3 className="col me-2">
+            <FaSmileWink className="fs-1 text-warning mx-2 "/>
+            {getUserProperty(user, 'firstName')},{getUserProperty(user, 'lastName')}
+          </h3>
           <div className="col d-flex justify-content-end align-items-center">
-            {following() && currentUser && (currentUser.userID !== user?.userID) ? (
+            {following() && currentUser && (currentUser.userID !== getUserProperty(user, 'userID')) ? (
               <button onClick={unfollowUser} className="btn bg-danger-subtle ">
                 - Unfollow
               </button>
@@ -155,35 +167,37 @@ export default function PublicProfile() {
         <div className="card-body">
           <div className="row">
             <figure className="col-4 figure ms-2">
-                <img src={`/images/emp/${user?.userID}.png`} style={{ height: 250}} className="figure-img img-fluid rounded-circle"/>
+                <img src={`/images/emp/${getUserProperty(user, 'userID')}.png`} style={{ height: 250}} className="figure-img img-fluid rounded-circle"/>
                 <figcaption className="figure-caption text-start">A caption for the above image.</figcaption>
             </figure>
             <ul className="col list-group form-control"> 
-              <li className={'specialization' in user ? 'list-group-item' : 'd-none'}> Specialization: {'specialization' in user ? user.specialization : ''}</li>
-              <li className={'vet_certificate' in user ? 'list-group-item' : 'd-none'}> Certificate: {'vet_certificate' in user ? user.vet_certificate : ''}</li>
-              <li className={'work_years' in user ? 'list-group-item' : 'd-none'}> Work Years: {'work_years' in user ? user.work_years : ''}</li>
-              <li className={'vet_license' in user ? 'list-group-item' : 'd-none'}> Licence: {'vet_license' in user ? user.vet_license : ''}</li>
-              <li className="list-group-item"> Email: {user.email}</li>
-              <li className="list-group-item"> Phone: {user.phone}</li>
+              <li className={'specialization' in user ? 'list-group-item' : 'd-none'}> Specialization: {'specialization' in user ? (user as any).specialization : ''}</li>
+              <li className={'vet_certificate' in user ? 'list-group-item' : 'd-none'}> Certificate: {'vet_certificate' in user ? (user as any).vet_certificate : ''}</li>
+              <li className={'work_years' in user ? 'list-group-item' : 'd-none'}> Work Years: {'work_years' in user ? (user as any).work_years : ''}</li>
+              <li className={'vet_license' in user ? 'list-group-item' : 'd-none'}> Licence: {'vet_license' in user ? (user as any).vet_license : ''}</li>
+              <li className="list-group-item"> Email: {getUserProperty(user, 'email')}</li>
+              <li className="list-group-item"> Phone: {getUserProperty(user, 'phone')}</li>
               <li className="list-group-item"> Location: {}</li>
             </ul>
           </div>
   
           <div className="w-75">
             <p >
-                <button className='btn bg-primary-subtle w-25' data-bs-toggle="collapse" data-bs-target={`#${user?.userID}`} 
-                  aria-controls={`${user?.userID}`} ><strong className="mx-2 text-danger">
+                <button className='btn bg-primary-subtle w-25' data-bs-toggle="collapse" data-bs-target={`#${getUserProperty(user, 'userID')}`} 
+                  aria-controls={`${getUserProperty(user, 'userID')}`} >
+                  <strong className="mx-2 text-danger">
                     <FaStar className="me-2"/> 
                     {'clinic_id' in user && 'Comment'} 
                     {'card_type' in user && 'Invoices Records'} 
-                    </strong></button>
+                  </strong>
+                </button>
             </p>
-            <div className={'clinic_id' in user ?  "collapse mt-3" : 'd-none'} id={`${user?.userID}`}>
+            <div className={'clinic_id' in user ?  "collapse mt-3" : 'd-none'} id={`${getUserProperty(user, 'userID')}`}>
                 <div className="card card-body">
                     <RatingDialog contents={contentVetList}/>
                 </div>
             </div>
-            <div className={'card_type' in user ?  "collapse mt-3" : 'd-none'} id={`${user?.userID}`}>
+            <div className={'card_type' in user ?  "collapse mt-3" : 'd-none'} id={`${getUserProperty(user, 'userID')}`}>
                 <div className="card card-body">
                     <RatingDialog contents={invoiceList}/>
                 </div>
@@ -210,14 +224,19 @@ export default function PublicProfile() {
           <div className="accordion-item">
             <h2 className="accordion-header" id="headingOne">
               <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                {'statement' in user && 'Something about ME...'} {'card_type' in user && 'Personal Info'}
+                <>
+                  {'statement' in user && 'Something about ME...'} 
+                  {'card_type' in user && 'Personal Info'}
+                </>
               </button>
             </h2>
             <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
               <div className="accordion-body">
-                  {'statement' in user && (user.statement.length > 0 ? user.statement : <p>Coming Up...</p> )}
-                  {'card_type' in user &&   <p>Credit Card Number: {user.card_type} </p> }
-                  {'card_type' in user &&   <p>Credit Card Number: {user.card_number} </p> }
+                <>
+                  {'statement' in user && (user.statement && (user.statement as any).length > 0 ? user.statement : <p>Coming Up...</p> )}
+                  {'card_type' in user && <p>Credit Card Type: {(user as any).card_type} </p> }
+                  {'card_type' in user && <p>Credit Card Number: {(user as any).card_number} </p> }
+                </>
               </div>
             </div>
           </div>
